@@ -49,7 +49,7 @@ export function createAuthController(
     const cookies = refreshCookieSchema.safeParse(req.cookies);
     if (!cookies.success) {
       const error = z.flattenError(cookies.error).fieldErrors;
-      req.log.error({ error }, 'logout did not carry refreshtoken');
+      req.log.info({ error }, 'logout did not carry refreshtoken');
     } else {
       const tokenId = auth.decodeRefreshToken(cookies.data[REFRESH_COOKIE]);
       if (tokenId) {
