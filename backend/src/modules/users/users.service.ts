@@ -144,7 +144,7 @@ export class UsersService {
       (role) => !currentRoles.map((role) => role.name).includes(role),
     );
     const rolesToRemove = currentRoles.filter(
-      (role) => !roles.includes(role.name as Role),
+      (role) => !dedupedRoles.includes(role.name as Role),
     );
     const addIds: number[] = [];
 
