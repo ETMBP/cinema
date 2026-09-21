@@ -37,8 +37,8 @@ export const idParamSchema = z.coerce.number().int().positive();
 
 export const newUserSchema = z.object({
   username: z.string().min(1),
-  email: z.string().min(1),
-  password: z.string().min(1),
+  email: z.email(),
+  password: z.string().min(8),
 });
 
 export type NewUser = z.infer<typeof newUserSchema>;

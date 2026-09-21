@@ -139,6 +139,19 @@ export class AuthService {
     await this.#tokenStore.revokeAllForUser(userId);
   }
 
+  decodeRefreshToken(token: string): string {
+    const tokenData = jwt.decode(token) as JwtPayload;
+    if (!tokenData.jti) {
+      throw new AppError(
+        400,
+        'INVALID_TOKEN',
+        'could not decode refresh token',
+      );
+    }
+
+    return tokenData.jti;
+  }
+
   async login(credentials: LoginRequest): Promise<LoginResult> {
     const user = await this.verifyCredentials(credentials);
     if (!user.isEnabled) {
@@ -154,6 +167,7 @@ export class AuthService {
   }
   async refresh(refreshToken: string): Promise<LoginResult> {
     const verificationResult = await this.verifyRefreshToken(refreshToken);
+    await this.revokeRefreshToken(verificationResult.tokenId);
     const newRefreshToken = await this.newRefreshToken(verificationResult.user);
     const newAccessToken = this.newAccessToken(verificationResult.user);
 

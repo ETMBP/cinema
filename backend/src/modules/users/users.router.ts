@@ -49,7 +49,7 @@ export function createUserRouter(
   router.put(
     '/:id/roles',
     authMw.authenticate,
-    authMw.requirePermission('users:edit'),
+    authMw.requirePermission('roles:manage'),
     controller.setUserRoles,
   );
   return router;

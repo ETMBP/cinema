@@ -46,15 +46,15 @@ export function createAuthController(
   };
 
   const logout: RequestHandler = async (req, res) => {
-    const body = refreshCookieSchema.safeParse(req.body);
-    if (!body.success) {
+    const cookies = refreshCookieSchema.safeParse(req.cookies);
+    if (!cookies.success) {
       throw new AppError(
         400,
         'INVALID_REQUEST',
         'no session information was recieved',
       );
     }
-    const { tokenId } = await auth.verifyRefreshToken(body.data.refreshToken);
+    const tokenId = auth.decodeRefreshToken(cookies.data[REFRESH_COOKIE]);
     await auth.revokeRefreshToken(tokenId);
     res.clearCookie(REFRESH_COOKIE, refreshCookieOptions);
     res.json({});

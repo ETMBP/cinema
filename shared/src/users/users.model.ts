@@ -26,6 +26,12 @@ export const userUpdateDataSchema = z
 
 export type UserUpdateData = z.infer<typeof userUpdateDataSchema>;
 
+export const userSelfUpdateDataSchema = z.object({
+  email: z.email(),
+});
+
+export type UserSelfUpdateData = z.infer<typeof userSelfUpdateDataSchema>;
+
 export const userPasswordUpdateDataSchema = z.object({
   currentPassword: z.string().min(1).optional(),
   newPassword: z.string().min(8),

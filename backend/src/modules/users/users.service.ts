@@ -135,7 +135,6 @@ export class UsersService {
 
   async setUserRoles(userId: number, roles: Role[]): Promise<PublicUser> {
     const currentRoles = await this.#repo.getUserRoles(userId);
-    //const rolesToAdd = roles.filter((role) => !currentRoles.includes(role));
     const rolesToAdd = roles.filter(
       (role) => !currentRoles.map((role) => role.name).includes(role),
     );
@@ -195,19 +194,30 @@ export class UsersService {
   async requestSelfPasswordReset(email: string): Promise<void> {
     const user = await this.getByEmail(email);
     if (!user) {
-      throw new Error('password reset failed, email not found');
+      // not throwing so existing and non-existing mail acts the same.
+      return;
     }
 
     const resetToken = crypto.randomUUID();
     await this.#sessions.savePwReset(user.id, resetToken);
     const extPort =
       this.#appConfig.extPort === 80 || this.#appConfig.extPort === 443
-        ? ''
-        : `:${this.#appConfig.extPort.toString()}`;
-    const url = `${this.#appConfig.protocol}://${this.#appConfig.host}${extPort}/password-reset?email=${email}&token=${resetToken}`;
+        ? undefined
+        : this.#appConfig.extPort;
+    const url = new URL(
+      `${this.#appConfig.protocol}://${this.#appConfig.host}`,
+    );
+    if (extPort) {
+      url.port = extPort.toString();
+    }
+    url.pathname = '/password-reset';
+    url.searchParams.append('token', resetToken);
 
     await this.#mail.sendMail(
-      passwordResetTemplate({ username: user.username, url: url }),
+      passwordResetTemplate({
+        username: user.username,
+        url: url.toString(),
+      }),
       user.email,
     );
   }

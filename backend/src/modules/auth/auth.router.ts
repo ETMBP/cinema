@@ -11,7 +11,7 @@ export function createAuthRouter(
   router.post('/login', controller.login);
   router.post('/logout', authMw.authenticate, controller.logout);
   router.post('/revoke-all', authMw.authenticate, controller.logoutEverywhere);
-  router.get('/refresh', controller.refresh);
+  router.post('/refresh', controller.refresh);
 
   return router;
 }

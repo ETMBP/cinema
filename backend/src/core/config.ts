@@ -3,7 +3,7 @@
 import { z } from 'zod';
 
 const configSchema = z.object({
-  APP_PROTOCOL: z.string().default('http'),
+  APP_PROTOCOL: z.string().default('https'),
   APP_HOST: z.string().min(1),
   APP_PORT: z.coerce.number().int().positive().default(3000),
   APP_EXT_PORT: z.coerce.number().int().positive().default(443),

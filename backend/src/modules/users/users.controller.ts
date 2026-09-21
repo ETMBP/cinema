@@ -9,6 +9,7 @@ import {
 import {
   roleSchema,
   userPasswordUpdateDataSchema,
+  userSelfUpdateDataSchema,
   userUpdateDataSchema,
 } from '@cinema/shared';
 import z from 'zod';
@@ -85,7 +86,7 @@ export function createUserController(users: UsersService) {
       throw new AppError(401, 'UNAUTHORIZED', 'not authenticated');
     }
     const userId = z.coerce.number().int().positive().parse(req.user.id);
-    const updateData = userUpdateDataSchema.safeParse(req.body);
+    const updateData = userSelfUpdateDataSchema.safeParse(req.body);
     if (!updateData.success) {
       throw new AppError(
         400,
@@ -181,6 +182,7 @@ export function createUserController(users: UsersService) {
     }
 
     res.json({});
+
     await users.requestSelfPasswordReset(body.data.email);
   };
 
