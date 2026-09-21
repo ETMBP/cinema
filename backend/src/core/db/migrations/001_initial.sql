@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `role_assignments` (
   `role_id` int(10) unsigned NOT NULL DEFAULT 0,
   `user_id` int(10) unsigned NOT NULL DEFAULT 0,
   `timestamp` datetime NOT NULL DEFAULT current_timestamp(),
+	PRIMARY KEY (`role_id`, `user_id`) USING BTREE,
   KEY `role_id` (`role_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `fk_roles_ra_id` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
