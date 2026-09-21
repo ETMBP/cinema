@@ -88,7 +88,11 @@ export class AuthService {
 
     const user = await this.#usersService.getById(claims.data.sub);
     if (!user) {
-      throw new AppError(404, 'USER_NOT_FOUND', 'User does not exist');
+      throw new AppError(
+        401,
+        'INVALID_TOKEN',
+        'Refresh token verification failed',
+      );
     }
     if (!user.isEnabled) {
       throw new AppError(

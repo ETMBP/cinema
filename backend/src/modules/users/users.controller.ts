@@ -82,9 +82,6 @@ export function createUserController(users: UsersService) {
 
   const getAllUser: RequestHandler = async (_req, res) => {
     const allUser = await users.getAllUser();
-    if (!(allUser.length > 0)) {
-      throw new AppError(404, 'USER_NOT_FOUND', 'no user has been found');
-    }
     res.json(allUser);
   };
 
