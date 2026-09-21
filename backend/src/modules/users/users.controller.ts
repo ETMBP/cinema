@@ -25,7 +25,7 @@ export function createUserController(users: UsersService) {
       );
     }
     const result = await users.createUser(newUser.data);
-    res.json({ message: 'Succesful registration', insertId: result });
+    res.status(201).json(result);
   };
 
   const getById: RequestHandler = async (req, res) => {
@@ -50,6 +50,13 @@ export function createUserController(users: UsersService) {
     }
     const userId = z.coerce.number().int().positive().parse(req.user.id);
     const publicUser = await users.getById(userId);
+    if (!publicUser) {
+      throw new AppError(
+        404,
+        'USER_NOT_FOUND',
+        'user with this id was not found',
+      );
+    }
     res.json(publicUser);
   };
 

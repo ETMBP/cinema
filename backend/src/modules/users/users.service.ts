@@ -117,6 +117,9 @@ export class UsersService {
 
   async updateIsEnabled(userId: number, isEnabled: boolean): Promise<void> {
     await this.#repo.updateEnabled(userId, isEnabled);
+    if (!isEnabled) {
+      await this.#sessions.revokeAllForUser(userId);
+    }
   }
 
   async updateUser(
@@ -135,7 +138,9 @@ export class UsersService {
 
   async setUserRoles(userId: number, roles: Role[]): Promise<PublicUser> {
     const currentRoles = await this.#repo.getUserRoles(userId);
-    const rolesToAdd = roles.filter(
+    // dedup so it don't fail on insert duplicated value
+    const dedupedRoles = [...new Set(roles)];
+    const rolesToAdd = dedupedRoles.filter(
       (role) => !currentRoles.map((role) => role.name).includes(role),
     );
     const rolesToRemove = currentRoles.filter(

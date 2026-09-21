@@ -48,17 +48,15 @@ export function createAuthController(
   const logout: RequestHandler = (req, res) => {
     const cookies = refreshCookieSchema.safeParse(req.cookies);
     if (!cookies.success) {
-      throw new AppError(
-        400,
-        'INVALID_REQUEST',
-        'no session information was recieved',
-      );
-    }
-    const tokenId = auth.decodeRefreshToken(cookies.data[REFRESH_COOKIE]);
-    if (tokenId) {
-      void auth.revokeRefreshToken(tokenId).catch((error: unknown) => {
-        req.log.error({ error }, 'token revocation failed during logout');
-      });
+      const error = z.flattenError(cookies.error);
+      req.log.error({ error }, 'logout did not carry refreshtoken');
+    } else {
+      const tokenId = auth.decodeRefreshToken(cookies.data[REFRESH_COOKIE]);
+      if (tokenId) {
+        void auth.revokeRefreshToken(tokenId).catch((error: unknown) => {
+          req.log.error({ error }, 'token revocation failed during logout');
+        });
+      }
     }
     res.clearCookie(REFRESH_COOKIE, refreshCookieOptions);
     res.json({});
