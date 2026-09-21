@@ -166,7 +166,7 @@ export function createUserController(users: UsersService) {
     res.json({});
   };
 
-  const requestPasswordReset: RequestHandler = async (req, res) => {
+  const requestPasswordReset: RequestHandler = (req, res) => {
     const body = z
       .object({
         email: z.email(),
@@ -183,7 +183,11 @@ export function createUserController(users: UsersService) {
 
     res.json({});
 
-    await users.requestSelfPasswordReset(body.data.email);
+    void users
+      .requestSelfPasswordReset(body.data.email)
+      .catch((error: unknown) => {
+        req.log.error({ error }, 'password reset request failed');
+      });
   };
 
   const resetPassword: RequestHandler = async (req, res) => {

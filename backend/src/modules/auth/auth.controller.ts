@@ -45,7 +45,7 @@ export function createAuthController(
     res.json(response);
   };
 
-  const logout: RequestHandler = async (req, res) => {
+  const logout: RequestHandler = (req, res) => {
     const cookies = refreshCookieSchema.safeParse(req.cookies);
     if (!cookies.success) {
       throw new AppError(
@@ -55,7 +55,11 @@ export function createAuthController(
       );
     }
     const tokenId = auth.decodeRefreshToken(cookies.data[REFRESH_COOKIE]);
-    await auth.revokeRefreshToken(tokenId);
+    if (tokenId) {
+      void auth.revokeRefreshToken(tokenId).catch((error: unknown) => {
+        req.log.error({ error }, 'token revocation failed during logout');
+      });
+    }
     res.clearCookie(REFRESH_COOKIE, refreshCookieOptions);
     res.json({});
   };

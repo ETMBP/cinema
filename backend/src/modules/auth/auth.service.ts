@@ -139,17 +139,12 @@ export class AuthService {
     await this.#tokenStore.revokeAllForUser(userId);
   }
 
-  decodeRefreshToken(token: string): string {
-    const tokenData = jwt.decode(token) as JwtPayload;
-    if (!tokenData.jti) {
-      throw new AppError(
-        400,
-        'INVALID_TOKEN',
-        'could not decode refresh token',
-      );
+  decodeRefreshToken(token: string): string | undefined {
+    const tokenData = jwt.decode(token);
+    if (typeof tokenData !== 'string' && tokenData?.jti) {
+      return tokenData.jti;
     }
-
-    return tokenData.jti;
+    return undefined;
   }
 
   async login(credentials: LoginRequest): Promise<LoginResult> {

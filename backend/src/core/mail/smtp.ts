@@ -24,6 +24,7 @@ export class SmtpMailer {
       host: options.host,
       port: options.port,
       secure: false,
+      requireTLS: true,
     });
   }
 
