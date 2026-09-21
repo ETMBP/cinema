@@ -1,0 +1,5 @@
+# All text files use LF - in the repo AND in the working tree.
+# Dev happens on Windows, but the code runs in Linux containers and Prettier
+# enforces LF anyway; one line ending everywhere beats autocrlf conversions.
+# Binary files are auto-detected and left untouched.
+* text=auto eol=lf

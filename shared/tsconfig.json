@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+
+    // Emit .d.ts files - this is what gives backend/frontend the types.
+    "declaration": true,
+
+    // Emit .d.ts.map files - makes "go to definition" in VS Code land in
+    // your .ts source instead of the compiled .d.ts.
+    "declarationMap": true
+  },
+  "include": ["src"]
+}

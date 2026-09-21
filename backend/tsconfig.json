@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+
+    // Pull in Node's global types (console, process, Buffer, ...).
+    // "lib" in the base config covers only the ECMAScript language itself;
+    // runtime globals come from @types/node and are declared explicitly.
+    "types": ["node"],
+
+    // Make the type-checker resolve the "#*" subpath imports (package.json
+    // "imports" field) through their "development" condition, i.e. to the
+    // .ts sources. At runtime plain `node dist/` takes the "default" branch
+    // (dist/), while the dev script passes --conditions=development to tsx.
+    "customConditions": ["development"]
+  },
+  "include": ["src"]
+}

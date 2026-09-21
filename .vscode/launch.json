@@ -1,0 +1,70 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Attaches to an already-running dev stack (`npm run dev` starts tsx
+      // with --inspect on port 9229). "restart": true makes the debugger
+      // survive tsx's auto-restarts: save a file, tsx respawns the process,
+      // the debugger reattaches, breakpoints keep working. Detaching leaves
+      // the backend running.
+      "name": "Backend: attach",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "restart": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      // Starts the backend itself under the debugger by running the npm dev
+      // script, so the command line stays defined in ONE place
+      // (backend/package.json). Pair with `npm run dev:frontend` in a
+      // terminal for the rest of the stack. Stopping the debug session
+      // stops the backend.
+      "name": "Backend: launch",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "-w", "backend"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      // Launches a Chrome instance wired to the debugger, pointed at Vite.
+      // NOTE: this Chrome runs with a separate debugging profile, not your
+      // daily one - install React DevTools in it once and it persists.
+      "name": "Frontend: Chrome (launch)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend"
+    },
+    {
+      // Alternative to the launch config when you want your OWN Chrome
+      // profile (with all your extensions): quit Chrome fully, start it as
+      //   chrome.exe --remote-debugging-port=9222
+      // then run this.
+      "name": "Frontend: Chrome (attach)",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend"
+    }
+  ],
+  "compounds": [
+    {
+      // Whole stack already running via `npm run dev` in a terminal.
+      "name": "Full stack: attach + Chrome",
+      "configurations": ["Backend: attach", "Frontend: Chrome (launch)"],
+      "stopAll": true
+    },
+    {
+      // Frontend running via `npm run dev:frontend`; the backend is started
+      // and stopped by the debug session itself.
+      "name": "Full stack: launch + Chrome",
+      "configurations": ["Backend: launch", "Frontend: Chrome (launch)"],
+      "stopAll": true
+    }
+  ]
+}

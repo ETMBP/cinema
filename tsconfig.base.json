@@ -1,0 +1,36 @@
+{
+  // Shared compiler options for the Node-side packages (shared, backend).
+  // The frontend keeps the stock Vite tsconfigs (bundler resolution) and does
+  // NOT extend this file - browser bundling and Node have different rules.
+  "compilerOptions": {
+    // Node 24 supports everything up to this comfortably.
+    "target": "es2023",
+    "lib": ["es2023"],
+
+    // Real Node ESM semantics: import paths must include the .js extension,
+    // package.json "exports" fields are respected. Strictest = fewest surprises
+    // between "compiles" and "actually runs under node".
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+
+    // The whole point of choosing TS over JS. Never turn this off.
+    "strict": true,
+
+    // Forces `import type { X }` for type-only imports, so the compiler never
+    // has to guess what can be erased. The Vite template uses it too.
+    "verbatimModuleSyntax": true,
+
+    // Lets `import express from "express"` work although express is CommonJS.
+    "esModuleInterop": true,
+
+    // Do not type-check the .d.ts files of dependencies - big speedup,
+    // and their bugs are not yours to fix.
+    "skipLibCheck": true,
+
+    // Windows is case-insensitive, Linux (your containers) is not.
+    // This catches casing mismatches before the container does.
+    "forceConsistentCasingInFileNames": true,
+
+    "sourceMap": true
+  }
+}

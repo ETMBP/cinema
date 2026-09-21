@@ -1,0 +1,14 @@
+{
+  // Prettier is the single formatter for this repo; format on save.
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+
+  // Tab key inserts 2 spaces, in every file type, regardless of what
+  // indentation an opened file already contains.
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+
+  // New files get LF to match .gitattributes/.prettierrc.
+  "files.eol": "\n"
+}

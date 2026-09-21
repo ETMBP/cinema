@@ -1,0 +1,13 @@
+# dependencies + build output
+node_modules/
+dist/
+
+# environment - .env.example is the committed documentation, .env is the secret reality
+.env
+.env.*.local
+
+# misc
+*.log
+coverage/
+Thumbs.db
+.DS_Store
