@@ -238,7 +238,6 @@ export class UsersService {
       throw new AppError(404, 'USER_NOT_FOUND', 'user was not found');
     }
     await this.updatePasswordHash(user.id, p.newPassword);
-    await this.#sessions.revokeAllForUser(user.id);
   }
 
   async createUser(user: NewUser): Promise<PublicUser> {

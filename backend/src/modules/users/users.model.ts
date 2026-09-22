@@ -3,6 +3,7 @@
 import { Router } from 'express';
 import type { UsersService } from './users.service.js';
 import { z } from 'zod';
+import { roleSchema } from '@cinema/shared';
 
 // Interface for returning the inited user module
 export interface UsersModule {
@@ -25,7 +26,8 @@ export const userRowSchema = z.object({
   roles: z
     .string()
     .nullable()
-    .transform((s) => (s ? s.split(',') : [])),
+    .transform((s) => (s ? s.split(',') : []))
+    .pipe(z.array(roleSchema)),
   created: z.coerce.date(),
 });
 

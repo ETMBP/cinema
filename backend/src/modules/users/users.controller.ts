@@ -141,8 +141,8 @@ export function createUserController(users: UsersService) {
         'userId is missing or malformed',
       );
     }
-    const udpateData = userUpdateDataSchema.safeParse(req.body);
-    if (!udpateData.success) {
+    const updateData = userUpdateDataSchema.safeParse(req.body);
+    if (!updateData.success) {
       throw new AppError(
         400,
         'INVALID_REQUEST',
@@ -151,7 +151,7 @@ export function createUserController(users: UsersService) {
     }
     const publicUser = await users.updateUser(
       targetUserId.data,
-      udpateData.data,
+      updateData.data,
     );
     res.json(publicUser);
   };

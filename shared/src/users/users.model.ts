@@ -1,6 +1,7 @@
 // User schema and type so frontend and backend will agree on it.
 
 import { z } from 'zod';
+import { roleSchema } from '../auth/roles.model.js';
 
 export const publicUserSchema = z.object({
   id: z.number().int().positive(),
@@ -8,7 +9,7 @@ export const publicUserSchema = z.object({
   email: z.string(),
   isEnabled: z.boolean(),
   created: z.coerce.date(),
-  roles: z.array(z.string()),
+  roles: roleSchema.array(),
 });
 
 export type PublicUser = z.infer<typeof publicUserSchema>;

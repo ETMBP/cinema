@@ -4,7 +4,7 @@ import type { UsersService } from '#modules/users/users.service.js';
 import type { LoginRequest, PublicUser } from '@cinema/shared';
 import {
   refreshTokenSchema,
-  type IVerifyiedRefresToken,
+  type IVerifiedRefresToken,
   type LoginResult,
 } from './auth.model.js';
 import { AppError } from '#core/error.js';
@@ -48,7 +48,7 @@ export class AuthService {
 
   async verifyRefreshToken(
     refreshToken: string,
-  ): Promise<IVerifyiedRefresToken> {
+  ): Promise<IVerifiedRefresToken> {
     let payload: string | JwtPayload;
     try {
       payload = jwt.verify(refreshToken, this.#jwtOptions.refreshSecret, {
@@ -126,7 +126,7 @@ export class AuthService {
     });
     const expiresAt =
       jwt.decode(refreshToken, { json: true })?.exp ??
-      Date.now() + this.#jwtOptions.refreshTtlSeconds;
+      Math.floor(Date.now() / 1000) + this.#jwtOptions.refreshTtlSeconds;
     await this.#tokenStore.save({
       tokenId: tokenId,
       userId: user.id,

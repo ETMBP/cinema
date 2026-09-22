@@ -47,7 +47,7 @@ export class SmtpMailer {
         },
         to: to,
       });
-      this.#logger.info({ message: `Email was sent`, to: to });
+      this.#logger.info({ to: to }, 'Email was sent');
     } catch (error) {
       this.#logger.error(error);
     }

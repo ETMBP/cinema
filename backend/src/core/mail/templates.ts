@@ -18,7 +18,7 @@ export function escapeHtml(value: string): string {
 
 export function welcomeTemplate(p: { username: string }): IMailTemplate {
   return {
-    subject: 'Welcome to ETMBP Entartainment',
+    subject: 'Welcome to ETMBP Entertainment',
     text: `Hi ${p.username},\n\nYour account has been successfully created.\nThank you for joining us, enjoy your stay!\n\nHave a nice day,\nETMBP Entertainment`,
     html: `<h2>Hi ${escapeHtml(p.username)}</h2>
       <br />
@@ -38,7 +38,7 @@ export function passwordResetTemplate(p: {
     text: `Hi ${p.username},\n\n
       A password reset has been requested.\n
       You can reset your password with this link: ${p.url}\n\n
-      Have a nice day\n,
+      Have a nice day,\n
       ETMBP Entertainment`,
     html: `<h2>Hi ${escapeHtml(p.username)}</h2>
       <br />

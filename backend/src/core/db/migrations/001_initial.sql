@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS `roles` (
 INSERT IGNORE INTO roles (name) VALUES ('admin'),('director'),('editor'),('user');
 
 CREATE TABLE IF NOT EXISTS `role_assignments` (
-  `role_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `user_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `role_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
   `timestamp` datetime NOT NULL DEFAULT current_timestamp(),
 	PRIMARY KEY (`role_id`, `user_id`) USING BTREE,
   KEY `role_id` (`role_id`),

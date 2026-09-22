@@ -28,12 +28,12 @@ export interface LoginResult {
 export const refreshTokenSchema = z.object({
   jti: z.uuid(),
   sub: z.coerce.number().int().positive(),
-  exp: z.coerce.date(),
+  exp: z.coerce.number().transform((s) => new Date(s * 1000)),
 });
 
 export type RefreshToken = z.infer<typeof refreshTokenSchema>;
 
-export interface IVerifyiedRefresToken {
+export interface IVerifiedRefresToken {
   user: PublicUser;
   tokenId: string;
 }

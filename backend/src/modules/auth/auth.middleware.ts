@@ -39,7 +39,7 @@ export function createAuthMiddleware(jwtAccessSecret: string) {
       throw new AppError(
         401,
         'INVALID_TOKEN',
-        'Access token verifaction failed',
+        'Access token verification failed',
       );
     }
 
