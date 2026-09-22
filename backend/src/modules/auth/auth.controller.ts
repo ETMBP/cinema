@@ -31,7 +31,7 @@ export function createAuthController(
     if (!body.success) {
       throw new AppError(
         400,
-        'INVALID_REQUEST',
+        'VALIDATION',
         'Invalid request body',
         z.flattenError(body.error).fieldErrors,
       );
@@ -77,7 +77,7 @@ export function createAuthController(
   const logoutEverywhere: RequestHandler = async (req, res) => {
     const user = authUserSchema.safeParse(req.user);
     if (!user.success) {
-      throw new AppError(401, 'UNAUTHORIZED', 'not authenticated');
+      throw new AppError(401, 'UNAUTHENTICATED', 'not authenticated');
     }
     await auth.revokeAllRefreshToken(user.data.id);
     res.clearCookie(REFRESH_COOKIE, refreshCookieOptions);

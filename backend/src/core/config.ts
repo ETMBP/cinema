@@ -42,6 +42,7 @@ export interface IAppOptions {
   host: string;
   port: number;
   extPort: number;
+  url: URL;
 }
 
 export interface IDbOptions {
@@ -110,11 +111,21 @@ export class Config {
   }
 
   get app(): IAppOptions {
+    const extPort =
+      this.#data.APP_EXT_PORT === 80 || this.#data.APP_EXT_PORT === 443
+        ? undefined
+        : this.#data.APP_EXT_PORT;
+    const url = new URL(`${this.#data.APP_PROTOCOL}://${this.#data.APP_HOST}`);
+    if (extPort) {
+      url.port = extPort.toString();
+    }
+
     return {
       protocol: this.#data.APP_PROTOCOL,
       host: this.#data.APP_HOST,
       port: this.#data.APP_PORT,
       extPort: this.#data.APP_EXT_PORT,
+      url: url,
     };
   }
 

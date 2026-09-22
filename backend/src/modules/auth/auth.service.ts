@@ -36,14 +36,14 @@ export class AuthService {
     if (!result) {
       throw new AppError(
         401,
-        'UNAUTHENTICATED',
+        'INVALID_CREDENTIALS',
         'Username or password is invalid',
       );
     }
     if (!result.isEnabled) {
       throw new AppError(
         403,
-        'FORBIDDEN',
+        'USER_DISABLED',
         'User is disabled, login prohibited',
       );
     }
@@ -157,9 +157,6 @@ export class AuthService {
 
   async login(credentials: LoginRequest): Promise<LoginResult> {
     const user = await this.verifyCredentials(credentials);
-    if (!user.isEnabled) {
-      throw new AppError(403, 'USER_DISABLED', 'This user is disabled');
-    }
     const refreshToken = await this.newRefreshToken(user);
     const accessToken = this.newAccessToken(user);
     return {

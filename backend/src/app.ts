@@ -33,11 +33,7 @@ export class App {
 
   setupApp() {
     const logger = this.logger;
-    const extUrl = new URL(
-      `${this.config.app.protocol}://${this.config.app.host}`,
-    );
-    extUrl.port = this.config.app.port.toString();
-    const corsUrls: string[] = [extUrl.href];
+    const corsUrls: string[] = [this.config.app.url.origin];
     if (this.config.app.host === 'localhost') {
       corsUrls.push(`http://${this.config.appHost}:5173`);
     }

@@ -205,16 +205,7 @@ export class UsersService {
 
     const resetToken = crypto.randomUUID();
     await this.#sessions.savePwReset(user.id, resetToken);
-    const extPort =
-      this.#appConfig.extPort === 80 || this.#appConfig.extPort === 443
-        ? undefined
-        : this.#appConfig.extPort;
-    const url = new URL(
-      `${this.#appConfig.protocol}://${this.#appConfig.host}`,
-    );
-    if (extPort) {
-      url.port = extPort.toString();
-    }
+    const url = this.#appConfig.url;
     url.pathname = '/password-reset';
     url.searchParams.append('token', resetToken);
 
