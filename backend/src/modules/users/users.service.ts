@@ -205,7 +205,7 @@ export class UsersService {
 
     const resetToken = crypto.randomUUID();
     await this.#sessions.savePwReset(user.id, resetToken);
-    const url = this.#appConfig.url;
+    const url = new URL(this.#appConfig.url);
     url.pathname = '/password-reset';
     url.searchParams.append('token', resetToken);
 
