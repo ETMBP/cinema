@@ -20,7 +20,7 @@ export function createUserController(users: UsersService) {
     if (!newUser.success) {
       throw new AppError(
         400,
-        'INVALID_REQUEST',
+        'VALIDATION',
         'Registration data is missing or malformed',
       );
     }
@@ -31,7 +31,7 @@ export function createUserController(users: UsersService) {
   const getById: RequestHandler = async (req, res) => {
     const id = idParamSchema.safeParse(req.params.id);
     if (!id.success) {
-      throw new AppError(400, 'INVALID_ID', 'User ID is invalid');
+      throw new AppError(400, 'VALIDATION', 'User ID is invalid');
     }
     const user = await users.getById(id.data);
     if (!user) {
@@ -46,7 +46,7 @@ export function createUserController(users: UsersService) {
 
   const getSelfById: RequestHandler = async (req, res) => {
     if (!req.user) {
-      throw new AppError(401, 'UNAUTHORIZED', 'not authenticated');
+      throw new AppError(401, 'UNAUTHENTICATED', 'not authenticated');
     }
     const userId = z.coerce.number().int().positive().parse(req.user.id);
     const publicUser = await users.getById(userId);
@@ -65,7 +65,7 @@ export function createUserController(users: UsersService) {
     if (!username.success) {
       throw new AppError(
         400,
-        'INVALID_USERNAME',
+        'VALIDATION',
         'Username is invalid or request is malformed',
       );
     }
@@ -87,14 +87,14 @@ export function createUserController(users: UsersService) {
 
   const updateSelf: RequestHandler = async (req, res) => {
     if (!req.user) {
-      throw new AppError(401, 'UNAUTHORIZED', 'not authenticated');
+      throw new AppError(401, 'UNAUTHENTICATED', 'not authenticated');
     }
     const userId = z.coerce.number().int().positive().parse(req.user.id);
     const updateData = userSelfUpdateDataSchema.safeParse(req.body);
     if (!updateData.success) {
       throw new AppError(
         400,
-        'INVALID_REQUEST',
+        'VALIDATION',
         'fields are missing or invalid',
         z.flattenError(updateData.error).fieldErrors,
       );
@@ -105,20 +105,20 @@ export function createUserController(users: UsersService) {
 
   const updateSelfPassword: RequestHandler = async (req, res) => {
     if (!req.user) {
-      throw new AppError(401, 'UNAUTHORIZED', 'not authenticated');
+      throw new AppError(401, 'UNAUTHENTICATED', 'not authenticated');
     }
     const userId = z.coerce.number().int().positive().parse(req.user.id);
     const passwordData = userPasswordUpdateDataSchema.safeParse(req.body);
     if (!passwordData.success) {
       throw new AppError(
         400,
-        'INVALID_REQUEST',
+        'VALIDATION',
         'fields are missing or invalid',
         z.flattenError(passwordData.error).fieldErrors,
       );
     }
     if (!passwordData.data.currentPassword) {
-      throw new AppError(400, 'INVALID_REQUEST', 'current password is missing');
+      throw new AppError(400, 'VALIDATION', 'current password is missing');
     }
     await users.updateSelfPasswordHash(
       userId,
@@ -135,17 +135,13 @@ export function createUserController(users: UsersService) {
       .positive()
       .safeParse(req.params.id);
     if (!targetUserId.success) {
-      throw new AppError(
-        400,
-        'INVALID_REQUEST',
-        'userId is missing or malformed',
-      );
+      throw new AppError(400, 'VALIDATION', 'userId is missing or malformed');
     }
     const updateData = userUpdateDataSchema.safeParse(req.body);
     if (!updateData.success) {
       throw new AppError(
         400,
-        'INVALID_REQUEST',
+        'VALIDATION',
         'request data is missing or malformed',
       );
     }
@@ -162,7 +158,7 @@ export function createUserController(users: UsersService) {
     if (!passwordData.success || !userId.success) {
       throw new AppError(
         400,
-        'INVALID_REQUEST',
+        'VALIDATION',
         'request data is missing or malformed',
       );
     }
@@ -178,11 +174,7 @@ export function createUserController(users: UsersService) {
       .safeParse(req.body);
 
     if (!body.success) {
-      throw new AppError(
-        400,
-        'INVALID_REQUEST',
-        'email is missing or malformed',
-      );
+      throw new AppError(400, 'VALIDATION', 'email is missing or malformed');
     }
 
     res.json({});
@@ -199,7 +191,7 @@ export function createUserController(users: UsersService) {
     if (!resetData.success) {
       throw new AppError(
         400,
-        'REQUEST_INVALID',
+        'VALIDATION',
         'request data is missing or malformed',
       );
     }
@@ -213,7 +205,7 @@ export function createUserController(users: UsersService) {
     if (!userId.success) {
       throw new AppError(
         400,
-        'INVALID_REQUEST',
+        'VALIDATION',
         'user id is missing or not a number',
       );
     }
@@ -222,7 +214,7 @@ export function createUserController(users: UsersService) {
     if (!roles.success) {
       throw new AppError(
         400,
-        'INVALID_REQUEST',
+        'VALIDATION',
         'role set is either missing or malformed',
       );
     }

@@ -4,25 +4,25 @@ import type { UsersService } from '#modules/users/users.service.js';
 import type { LoginRequest, PublicUser } from '@cinema/shared';
 import {
   refreshTokenSchema,
-  type IVerifiedRefresToken,
+  type IVerifiedRefreshToken,
   type LoginResult,
 } from './auth.model.js';
 import { AppError } from '#core/error.js';
 import type { IJwtOptions } from '#core/config.js';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
-import type { TokenStore } from '../../core/db/token.store.js';
+import type { ITokenStore } from '#core/db/token.model.js';
 import type { Logger } from 'pino';
 
 export class AuthService {
   readonly #jwtOptions: IJwtOptions;
   readonly #usersService: UsersService;
-  readonly #tokenStore: TokenStore;
+  readonly #tokenStore: ITokenStore;
   readonly #logger: Logger;
 
   constructor(
     jwtOptions: IJwtOptions,
     usersService: UsersService,
-    tokenStore: TokenStore,
+    tokenStore: ITokenStore,
     logger: Logger,
   ) {
     this.#jwtOptions = jwtOptions;
@@ -34,12 +34,16 @@ export class AuthService {
   async verifyCredentials(loginData: LoginRequest): Promise<PublicUser> {
     const result = await this.#usersService.verifyLogin(loginData);
     if (!result) {
-      throw new AppError(401, 'AUTH_FAILED', 'Username or password is invalid');
+      throw new AppError(
+        401,
+        'UNAUTHENTICATED',
+        'Username or password is invalid',
+      );
     }
     if (!result.isEnabled) {
       throw new AppError(
         403,
-        'AUTH_FAILED',
+        'FORBIDDEN',
         'User is disabled, login prohibited',
       );
     }
@@ -48,7 +52,7 @@ export class AuthService {
 
   async verifyRefreshToken(
     refreshToken: string,
-  ): Promise<IVerifiedRefresToken> {
+  ): Promise<IVerifiedRefreshToken> {
     let payload: string | JwtPayload;
     try {
       payload = jwt.verify(refreshToken, this.#jwtOptions.refreshSecret, {

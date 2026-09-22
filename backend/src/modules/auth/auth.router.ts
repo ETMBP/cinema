@@ -9,7 +9,7 @@ export function createAuthRouter(
   const router = Router();
 
   router.post('/login', controller.login);
-  router.post('/logout', authMw.authenticate, controller.logout);
+  router.post('/logout', controller.logout);
   router.post('/revoke-all', authMw.authenticate, controller.logoutEverywhere);
   router.post('/refresh', controller.refresh);
 

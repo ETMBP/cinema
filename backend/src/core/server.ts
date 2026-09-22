@@ -32,7 +32,7 @@ export class Server {
 
   async start(): Promise<void> {
     const config = new Config(process.env);
-    const logger = createLogger(config.logLevel);
+    const logger = createLogger(config.logLevel, config.isProduction);
     const db = new DbPool(config.db);
     const redisConnection = new RedisConnection(config.redis, logger);
     const mail = new SmtpMailer(config.mail, logger);

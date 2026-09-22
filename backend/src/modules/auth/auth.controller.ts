@@ -7,9 +7,7 @@ import {
   type LoginResponse,
 } from '@cinema/shared';
 import z from 'zod';
-import { refreshCookieSchema } from './auth.model.js';
-
-export const REFRESH_COOKIE = 'refreshToken';
+import { refreshCookieSchema, REFRESH_COOKIE } from './auth.model.js';
 
 export interface AuthCookieDeps {
   isProduction: boolean;
@@ -69,7 +67,7 @@ export function createAuthController(
     }
 
     const { accessToken, refreshToken, user } = await auth.refresh(
-      cookies.data.refreshToken,
+      cookies.data[REFRESH_COOKIE],
     );
     res.cookie(REFRESH_COOKIE, refreshToken, refreshCookieOptions);
     const response: LoginResponse = { accessToken, user };

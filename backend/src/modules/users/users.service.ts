@@ -164,7 +164,7 @@ export class UsersService {
         if (role.name === 'user') {
           throw new AppError(
             400,
-            'INVALID_REQUEST',
+            'VALIDATION',
             'user is the default role and cannot be removed',
           );
         }
@@ -230,7 +230,7 @@ export class UsersService {
   async resetSelfPassword(p: PasswordResetParams): Promise<void> {
     const storedToken = await this.#sessions.getPwReset(p.token);
     if (!storedToken) {
-      throw new AppError(401, 'TOKEN_INVALID', 'the token is invalid');
+      throw new AppError(401, 'INVALID_TOKEN', 'the token is invalid');
     }
 
     const user = await this.getById(Number(storedToken));
@@ -254,7 +254,7 @@ export class UsersService {
     if (!newUser) {
       throw new Error('User creation silently failed');
     }
-    await this.#mail.sendMail(
+    void this.#mail.sendMail(
       welcomeTemplate({ username: user.username }),
       user.email,
     );

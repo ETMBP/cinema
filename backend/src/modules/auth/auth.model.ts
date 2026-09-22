@@ -2,22 +2,8 @@
 
 import type { PublicUser } from '@cinema/shared';
 import z from 'zod';
-import { REFRESH_COOKIE } from './auth.controller.js';
 
-export const refreshTokenRecordSchema = z.object({
-  tokenId: z.uuid(),
-  userId: z.number().int().positive(),
-  expiresAt: z.coerce.date(),
-});
-
-export type RefreshTokenRecord = z.infer<typeof refreshTokenRecordSchema>;
-
-export interface ITokenStore {
-  save(record: RefreshTokenRecord): Promise<void>;
-  find(tokenId: string): Promise<RefreshTokenRecord | undefined>;
-  revoke(tokenId: string): Promise<void>;
-  revokeAllForUser(userId: number): Promise<void>;
-}
+export const REFRESH_COOKIE = 'refreshToken';
 
 export interface LoginResult {
   user: PublicUser;
@@ -33,7 +19,7 @@ export const refreshTokenSchema = z.object({
 
 export type RefreshToken = z.infer<typeof refreshTokenSchema>;
 
-export interface IVerifiedRefresToken {
+export interface IVerifiedRefreshToken {
   user: PublicUser;
   tokenId: string;
 }

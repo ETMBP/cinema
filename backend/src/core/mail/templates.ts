@@ -35,11 +35,7 @@ export function passwordResetTemplate(p: {
 }): IMailTemplate {
   return {
     subject: 'ETMBP Password Reset',
-    text: `Hi ${p.username},\n\n
-      A password reset has been requested.\n
-      You can reset your password with this link: ${p.url}\n\n
-      Have a nice day,\n
-      ETMBP Entertainment`,
+    text: `Hi ${p.username},\n\nA password reset has been requested.\nYou can reset your password with this link: ${p.url}\n\nHave a nice day,\nETMBP Entertainment`,
     html: `<h2>Hi ${escapeHtml(p.username)}</h2>
       <br />
       <p>A password reset has been requested.<br />

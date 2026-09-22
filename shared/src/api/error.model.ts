@@ -1,16 +1,23 @@
 //
 import { z } from 'zod';
 
-export const knownErrorCodes = [
-  'VALIDATION',
-  'INVALID_ID',
-  'INVALID_CREDENTIALS',
-  'USER_DISABLED',
-  'ROUTE_NOT_FOUND',
+export const knownErrorCodeSchema = z.enum([
+  'EMAIL_TAKEN',
+  'FORBIDDEN',
   'INTERNAL',
-];
+  'INVALID_CREDENTIALS',
+  'INVALID_TOKEN',
+  'ROUTE_NOT_FOUND',
+  'TOKEN_EXPIRED',
+  'UNAUTHENTICATED',
+  'USER_DISABLED',
+  'USER_NOT_FOUND',
+  'USERNAME_TAKEN',
+  'VALIDATION',
+  'WRONG_PASSWORD',
+]);
 
-export type KnownErrorCode = (typeof knownErrorCodes)[number];
+export type ErrorCode = z.infer<typeof knownErrorCodeSchema>;
 
 export const errorResponseSchema = z.object({
   error: z.object({

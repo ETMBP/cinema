@@ -5,7 +5,7 @@ import {
   refreshTokenRecordSchema,
   type ITokenStore,
   type RefreshTokenRecord,
-} from '../../modules/auth/auth.model.js';
+} from '#core/db/token.model.js';
 
 export class TokenStore implements ITokenStore {
   readonly #redis: RedisClient;

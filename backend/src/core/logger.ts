@@ -1,6 +1,6 @@
 import pino, { type Logger } from 'pino';
 
-export function createLogger(logLevel: string): Logger {
+export function createLogger(logLevel: string, isProduction: boolean): Logger {
   return pino({
     level: logLevel,
     timestamp: pino.stdTimeFunctions.isoTime,
@@ -9,9 +9,6 @@ export function createLogger(logLevel: string): Logger {
       'user.passwordHash',
       'user.password_hash',
     ],
-    transport: {
-      target: 'pino-pretty',
-      options: { destination: 1 },
-    },
+    transport: isProduction ? undefined : { target: 'pino-pretty' },
   });
 }

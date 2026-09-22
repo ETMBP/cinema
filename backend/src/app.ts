@@ -33,12 +33,17 @@ export class App {
 
   setupApp() {
     const logger = this.logger;
+    const extUrl = new URL(
+      `${this.config.app.protocol}://${this.config.app.host}`,
+    );
+    extUrl.port = this.config.app.port.toString();
+    const corsUrls: string[] = [extUrl.href];
+    if (this.config.app.host === 'localhost') {
+      corsUrls.push(`http://${this.config.appHost}:5173`);
+    }
     const corsOptions: CorsOptions = {
       credentials: true,
-      origin: [
-        `http://${this.config.appHost}:${this.config.appPort}`,
-        `http://${this.config.appHost}:5173`,
-      ],
+      origin: corsUrls,
     };
     this.app.use(cors(corsOptions));
     this.app.use(express.json());
