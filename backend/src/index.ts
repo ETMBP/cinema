@@ -18,7 +18,7 @@ const server = new Server();
 
 // Handling container shutdown
 const shutdown = () => {
-  server.stop().catch((err) => {
+  server.stop().catch((err: unknown) => {
     console.error('Graceful shutdown failed:', err);
     process.exit(1);
   });

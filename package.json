@@ -21,10 +21,10 @@
     "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "concurrently": "^10.0.5",
-    "prettier": "^3.9.6"
-  },
-  "dependencies": {
-    "eslint-plugin-perfectionist": "^5.11.0"
+    "eslint": "^10.10.0",
+    "prettier": "^3.9.6",
+    "typescript-eslint": "^8.69.0"
   }
 }
