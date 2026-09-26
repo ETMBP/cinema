@@ -111,14 +111,6 @@ export class UsersRepo {
     }
   }
 
-  async deleteUser(userId: number): Promise<number> {
-    const query = `DELETE FROM users
-      WHERE id = ?`;
-    const params = [userId];
-    const result = await this.#db.execute(query, params);
-    return result.affectedRows;
-  }
-
   async getAllRoles(): Promise<RoleRow[] | undefined> {
     const query = `SELECT id, name FROM roles`;
     const result = await this.#db.queryRows(roleRowSchema, query);
