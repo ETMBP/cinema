@@ -43,7 +43,7 @@ export class Server {
     try {
       await mail.verify();
     } catch (error) {
-      logger.error(error);
+      logger.error({ err: error });
     }
 
     // Middlewares
