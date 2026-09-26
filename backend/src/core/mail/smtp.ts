@@ -49,7 +49,7 @@ export class SmtpMailer {
       });
       this.#logger.info({ to: to }, 'Email was sent');
     } catch (error) {
-      this.#logger.error(error);
+      this.#logger.error({ error, to }, 'sending mail failed');
     }
   }
 }
