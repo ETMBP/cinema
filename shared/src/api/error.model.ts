@@ -7,6 +7,7 @@ export const knownErrorCodeSchema = z.enum([
   'INTERNAL',
   'INVALID_CREDENTIALS',
   'INVALID_TOKEN',
+  'MOVIE_NOT_FOUND',
   'ROUTE_NOT_FOUND',
   'TOKEN_EXPIRED',
   'UNAUTHENTICATED',

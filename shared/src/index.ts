@@ -5,3 +5,4 @@ export * from './auth/auth.model.js';
 export * from './auth/permissions.model.js';
 export * from './auth/roles.model.js';
 export * from './users/users.model.js';
+export * from './movies/movies.model.js';

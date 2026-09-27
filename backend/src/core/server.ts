@@ -11,10 +11,12 @@ import { SmtpMailer } from './mail/smtp.js';
 import { createAuthModule } from '#modules/auth/auth.module.js';
 import { createAuthMiddleware } from '#modules/auth/auth.middleware.js';
 import { TokenStore } from './db/token.store.js';
+import { createMoviesModule } from '#modules/movies/movies.module.js';
 
 export interface IAppRouters {
   users: Router;
   auth: Router;
+  movies: Router;
 }
 
 export interface IAppDeps {
@@ -65,10 +67,11 @@ export class Server {
       authMiddleware,
       logger.child({ module: 'auth' }),
     );
+    const movies = createMoviesModule(db, authMiddleware);
     const app = new App({
       config,
       logger,
-      routers: { users: users.router, auth: auth },
+      routers: { users: users.router, auth: auth, movies: movies.router },
     }).app;
 
     // App Start

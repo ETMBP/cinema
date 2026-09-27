@@ -52,5 +52,6 @@ export class App {
   addRoutes(routers: IAppRouters) {
     this.app.use('/api/user', routers.users);
     this.app.use('/api/auth', routers.auth);
+    this.app.use('/api/movie', routers.movies);
   }
 }
