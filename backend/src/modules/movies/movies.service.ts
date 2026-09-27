@@ -3,19 +3,18 @@ import {
   type MovieInput,
   type PublicMovie,
 } from '@cinema/shared';
-import type { MovieRepo } from './movies.repo.js';
-import { AppError } from '#core/error.js';
+import type { MoviesRepo } from './movies.repo.js';
 
 export class MoviesService {
-  readonly #repo: MovieRepo;
+  readonly #repo: MoviesRepo;
 
-  constructor(movieRepo: MovieRepo) {
+  constructor(movieRepo: MoviesRepo) {
     this.#repo = movieRepo;
   }
 
   async getById(id: number): Promise<PublicMovie | undefined> {
     const result = await this.#repo.findById(id);
-    return publicMovieSchema.parse(result);
+    return result ? publicMovieSchema.parse(result) : undefined;
   }
 
   async newMovie(movie: MovieInput, userId: number): Promise<PublicMovie> {
@@ -23,11 +22,7 @@ export class MoviesService {
     const addedMovie = await this.#repo.findById(result.insertId);
 
     if (!addedMovie) {
-      throw new AppError(
-        500,
-        'INTERNAL',
-        'adding new movie db backend silently failed',
-      );
+      throw new Error('adding new movie db backend silently failed');
     }
 
     return publicMovieSchema.parse(addedMovie);

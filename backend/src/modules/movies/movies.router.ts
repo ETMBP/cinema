@@ -15,7 +15,7 @@ export function createMoviesRouter(
     controller.getById,
   );
   router.post(
-    '/new',
+    '/',
     authMw.authenticate,
     authMw.requirePermission('movies:create'),
     controller.createMovie,

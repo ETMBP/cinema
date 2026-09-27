@@ -21,7 +21,7 @@ export const movieRowScheme = z.object({
     .min(0)
     .max(1)
     .transform((v) => v === 1),
-  imdbUrl: z.string().nullish(),
+  imdbUrl: z.string().nullable(),
   addedBy: z.string(),
   addedWhen: z.coerce.date(),
 });

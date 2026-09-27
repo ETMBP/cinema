@@ -3,7 +3,7 @@ import type { MovieInput } from '@cinema/shared';
 import { movieRowScheme, type MovieRow } from './movies.model.js';
 import type { ResultSetHeader } from 'mysql2';
 
-export class MovieRepo {
+export class MoviesRepo {
   readonly #db: DbPool;
 
   constructor(db: DbPool) {

@@ -34,7 +34,7 @@ export function createMoviesController(service: MoviesService) {
     }
 
     const createdMovie = await service.newMovie(movieData.data, userId);
-    res.json(createdMovie);
+    res.status(201).json(createdMovie);
   };
 
   return { getById, createMovie };

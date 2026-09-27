@@ -2,7 +2,7 @@ import type { DbPool } from '#core/db/db.repo.js';
 import type { AuthMiddleware } from '#modules/auth/auth.middleware.js';
 import { createMoviesController } from './movies.controller.js';
 import type { MoviesModule } from './movies.model.js';
-import { MovieRepo as MoviesRepo } from './movies.repo.js';
+import { MoviesRepo as MoviesRepo } from './movies.repo.js';
 import { createMoviesRouter } from './movies.router.js';
 import { MoviesService } from './movies.service.js';
 
