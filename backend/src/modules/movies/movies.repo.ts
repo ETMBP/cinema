@@ -21,6 +21,18 @@ export class MoviesRepo {
     return rows[0];
   }
 
+  async findAll(): Promise<MovieRow[] | undefined> {
+    const query = `SELECT m.id, m.title, m.year, m.is_watched AS isWatched, m.is_downloaded AS isDownloaded, m.imdb_url AS imdbUrl, u.username AS addedBy, m.added_when AS addedWhen
+      FROM movies AS m
+      LEFT JOIN users AS u ON u.id = m.added_by`;
+    const rows = await this.#db.queryRows(movieRowScheme, query);
+    if (rows.length < 1) {
+      return undefined;
+    }
+
+    return rows;
+  }
+
   async newMovie(movie: MovieInput, userId: number): Promise<ResultSetHeader> {
     const query = `INSERT INTO movies 
       (title, year, is_watched, is_downloaded, added_by, imdb_url)
