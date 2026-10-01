@@ -3,10 +3,12 @@ import {
   type MovieInput,
   type MovieListQuery,
   type MovieListResponse,
+  type MovieUpdateInput,
   type PublicMovie,
 } from '@cinema/shared';
 import type { MoviesRepo } from './movies.repo.js';
 import z from 'zod';
+import { AppError } from '#core/error.js';
 
 export class MoviesService {
   readonly #repo: MoviesRepo;
@@ -35,5 +37,29 @@ export class MoviesService {
     }
 
     return publicMovieSchema.parse(addedMovie);
+  }
+
+  async deleteMovie(id: number): Promise<void> {
+    await this.#repo.delete(id);
+  }
+
+  async updateMovie(id: number, data: MovieUpdateInput): Promise<PublicMovie> {
+    if (Object.keys(data).length === 0) {
+      throw new AppError(400, 'VALIDATION', 'update data is empty');
+    }
+
+    await this.#repo.updateMovie(id, data);
+
+    const updatedMovie = await this.#repo.findById(id);
+
+    if (!updatedMovie) {
+      throw new AppError(
+        404,
+        'MOVIE_NOT_FOUND',
+        'movie was deleted during the operation',
+      );
+    }
+
+    return publicMovieSchema.parse(updatedMovie);
   }
 }

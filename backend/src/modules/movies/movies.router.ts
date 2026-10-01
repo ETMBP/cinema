@@ -26,6 +26,12 @@ export function createMoviesRouter(
     authMw.requirePermission('movies:read'),
     controller.getById,
   );
+  router.patch(
+    '/:id',
+    authMw.authenticate,
+    authMw.requirePermission('movies:edit'),
+    controller.updateMovie,
+  );
 
   return router;
 }

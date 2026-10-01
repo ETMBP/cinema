@@ -23,6 +23,16 @@ export const movieInputSchema = z.object({
 
 export type MovieInput = z.infer<typeof movieInputSchema>;
 
+export const movieUpdateInputSchema = z.object({
+  title: z.string().min(1).max(255).optional(),
+  year: z.number().int().positive().optional(),
+  isWatched: z.boolean().optional(),
+  isDownloaded: z.boolean().optional(),
+  imdbUrl: z.string().max(255).nullish(),
+});
+
+export type MovieUpdateInput = z.infer<typeof movieUpdateInputSchema>;
+
 const sortTerms = ['title', 'year', 'addedWhen', 'addedBy'];
 const queryBool = z.enum(['true', 'false']).transform((v) => v === 'true');
 

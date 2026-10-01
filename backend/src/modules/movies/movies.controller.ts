@@ -2,7 +2,11 @@ import type { RequestHandler } from 'express';
 import type { MoviesService } from './movies.service.js';
 import z from 'zod';
 import { AppError } from '#core/error.js';
-import { movieInputSchema, movieListQuerySchema } from '@cinema/shared';
+import {
+  movieInputSchema,
+  movieListQuerySchema,
+  movieUpdateInputSchema,
+} from '@cinema/shared';
 
 export function createMoviesController(service: MoviesService) {
   const getById: RequestHandler = async (req, res) => {
@@ -54,7 +58,27 @@ export function createMoviesController(service: MoviesService) {
     res.status(201).json(createdMovie);
   };
 
-  return { getById, getList, createMovie };
+  const updateMovie: RequestHandler = async (req, res) => {
+    const id = z.coerce.number().int().positive().safeParse(req.params.id);
+    if (!id.success) {
+      throw new AppError(400, 'VALIDATION', 'id is missing or not a number');
+    }
+
+    const updateData = movieUpdateInputSchema.safeParse(req.body);
+    if (!updateData.success) {
+      throw new AppError(
+        400,
+        'VALIDATION',
+        'update data is missing or malformed',
+      );
+    }
+
+    const updatedMovie = await service.updateMovie(id.data, updateData.data);
+
+    res.json(updatedMovie);
+  };
+
+  return { getById, getList, createMovie, updateMovie };
 }
 
 export type MoviesController = ReturnType<typeof createMoviesController>;

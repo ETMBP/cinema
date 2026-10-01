@@ -1,5 +1,9 @@
-import type { DbPool, SqlParam } from '#core/db/db.repo.js';
-import type { MovieInput, MovieListQuery } from '@cinema/shared';
+import type { DbExecutor, DbPool, SqlParam } from '#core/db/db.repo.js';
+import type {
+  MovieInput,
+  MovieListQuery,
+  MovieUpdateInput,
+} from '@cinema/shared';
 import { movieRowScheme, type MovieRow } from './movies.model.js';
 import type { ResultSetHeader } from 'mysql2';
 import z from 'zod';
@@ -77,6 +81,14 @@ export class MoviesRepo {
     return { rows, total: count.total };
   }
 
+  async delete(id: number): Promise<number> {
+    const query = `DELETE FROM movies WHERE id = ?`;
+    const params = [id];
+
+    const result = await this.#db.execute(query, params);
+    return result.affectedRows;
+  }
+
   async newMovie(movie: MovieInput, userId: number): Promise<ResultSetHeader> {
     const query = `INSERT INTO movies 
       (title, year, is_watched, is_downloaded, added_by, imdb_url)
@@ -92,5 +104,89 @@ export class MoviesRepo {
     const result = await this.#db.execute(query, values);
 
     return result;
+  }
+
+  async updateMovie(id: number, d: MovieUpdateInput): Promise<void> {
+    const columns: string[] = [];
+    const params: SqlParam[] = [];
+
+    if (d.title) {
+      columns.push('title');
+      params.push(d.title);
+    }
+    if (d.year) {
+      columns.push('year');
+      params.push(d.year);
+    }
+    if (d.isWatched !== undefined) {
+      columns.push('is_watched');
+      params.push(d.isWatched);
+    }
+    if (d.isDownloaded !== undefined) {
+      columns.push('is_downloaded');
+      params.push(d.isDownloaded);
+    }
+    if (d.imdbUrl !== undefined) {
+      columns.push('imdb_url');
+      params.push(d.imdbUrl);
+    }
+
+    const query = `UPDATE movies SET ${columns.join(' = ?, ')} = ? WHERE id = ?`;
+    await this.#db.execute(query, [...params, id]);
+  }
+
+  async updateTitle(
+    id: number,
+    title: string,
+    dbConn: DbExecutor = this.#db,
+  ): Promise<void> {
+    const query = `UPDATE movies SET title = ? WHERE id = ?`;
+    const params = [title, id];
+
+    await dbConn.execute(query, params);
+  }
+
+  async updateYear(
+    id: number,
+    year: number,
+    dbConn: DbExecutor = this.#db,
+  ): Promise<void> {
+    const query = `UPDATE movies SET year = ? WHERE id = ?`;
+    const params = [year, id];
+
+    await dbConn.execute(query, params);
+  }
+
+  async updateIsWatched(
+    id: number,
+    isWatched: boolean,
+    dbConn: DbExecutor = this.#db,
+  ): Promise<void> {
+    const query = `UPDATE movies SET is_watched = ? WHERE id = ?`;
+    const params = [isWatched, id];
+
+    await dbConn.execute(query, params);
+  }
+
+  async updateIsDownloaded(
+    id: number,
+    isDownloaded: boolean,
+    dbConn: DbExecutor = this.#db,
+  ): Promise<void> {
+    const query = `UPDATE movies SET is_downloaded = ? WHERE id = ?`;
+    const params = [isDownloaded, id];
+
+    await dbConn.execute(query, params);
+  }
+
+  async updateImdbUrl(
+    id: number,
+    imdbUrl: string | null,
+    dbConn: DbExecutor = this.#db,
+  ): Promise<void> {
+    const query = `UPDATE movies SET imdb_url = ? WHERE id = ?`;
+    const params = [imdbUrl, id];
+
+    await dbConn.execute(query, params);
   }
 }
