@@ -8,17 +8,23 @@ export function createMoviesRouter(
 ): Router {
   const router = Router();
 
-  router.get(
-    '/:id',
-    authMw.authenticate,
-    authMw.requirePermission('movies:read'),
-    controller.getById,
-  );
   router.post(
     '/',
     authMw.authenticate,
     authMw.requirePermission('movies:create'),
     controller.createMovie,
+  );
+  router.get(
+    '/list',
+    authMw.authenticate,
+    authMw.requirePermission('movies:read'),
+    controller.getList,
+  );
+  router.get(
+    '/:id',
+    authMw.authenticate,
+    authMw.requirePermission('movies:read'),
+    controller.getById,
   );
 
   return router;

@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 import type { MoviesService } from './movies.service.js';
 import z from 'zod';
 import { AppError } from '#core/error.js';
-import { movieInputSchema } from '@cinema/shared';
+import { movieInputSchema, movieListQuerySchema } from '@cinema/shared';
 
 export function createMoviesController(service: MoviesService) {
   const getById: RequestHandler = async (req, res) => {
@@ -23,6 +23,23 @@ export function createMoviesController(service: MoviesService) {
     res.json(movie);
   };
 
+  const getList: RequestHandler = async (req, res) => {
+    const queryInput = movieListQuerySchema.safeParse(req.query);
+
+    if (!queryInput.success) {
+      throw new AppError(
+        400,
+        'VALIDATION',
+        'search query is missing or malformed',
+        z.flattenError(queryInput.error).fieldErrors,
+      );
+    }
+
+    const result = await service.getList(queryInput.data);
+
+    res.json(result);
+  };
+
   const createMovie: RequestHandler = async (req, res) => {
     if (!req.user) {
       throw new AppError(401, 'UNAUTHENTICATED', 'not authenticated');
@@ -30,14 +47,14 @@ export function createMoviesController(service: MoviesService) {
     const userId = req.user.id;
     const movieData = movieInputSchema.safeParse(req.body);
     if (!movieData.success) {
-      throw new AppError(400, 'VALIDATION', 'rquest is invalid or malformed');
+      throw new AppError(400, 'VALIDATION', 'request is invalid or malformed');
     }
 
     const createdMovie = await service.newMovie(movieData.data, userId);
     res.status(201).json(createdMovie);
   };
 
-  return { getById, createMovie };
+  return { getById, getList, createMovie };
 }
 
 export type MoviesController = ReturnType<typeof createMoviesController>;

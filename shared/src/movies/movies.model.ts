@@ -22,3 +22,25 @@ export const movieInputSchema = z.object({
 });
 
 export type MovieInput = z.infer<typeof movieInputSchema>;
+
+const sortTerms = ['title', 'year', 'addedWhen', 'addedBy'];
+const queryBool = z.enum(['true', 'false']).transform((v) => v === 'true');
+
+export const movieListQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  sort: z.enum(sortTerms).default('title'),
+  order: z.enum(['asc', 'desc']).default('asc'),
+  search: z.string().trim().min(1).max(100).optional(),
+  isDownloaded: queryBool.optional(),
+  isWatched: queryBool.optional(),
+});
+
+export type MovieListQuery = z.infer<typeof movieListQuerySchema>;
+
+export const movieListResponseSchema = z.object({
+  items: z.array(publicMovieSchema),
+  total: z.number().int().nonnegative(),
+});
+
+export type MovieListResponse = z.infer<typeof movieListResponseSchema>;
