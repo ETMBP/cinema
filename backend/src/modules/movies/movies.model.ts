@@ -5,7 +5,7 @@ export interface MoviesModule {
   router: Router;
 }
 
-export const movieRowScheme = z.object({
+export const movieRowSchema = z.object({
   id: z.coerce.number().positive().int(),
   title: z.string(),
   year: z.coerce.number().positive().int(),
@@ -26,4 +26,4 @@ export const movieRowScheme = z.object({
   addedWhen: z.coerce.date(),
 });
 
-export type MovieRow = z.infer<typeof movieRowScheme>;
+export type MovieRow = z.infer<typeof movieRowSchema>;

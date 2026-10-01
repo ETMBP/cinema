@@ -32,6 +32,12 @@ export function createMoviesRouter(
     authMw.requirePermission('movies:edit'),
     controller.updateMovie,
   );
+  router.delete(
+    '/:id',
+    authMw.authenticate,
+    authMw.requirePermission('movies:delete'),
+    controller.deleteMovie,
+  );
 
   return router;
 }

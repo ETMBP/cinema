@@ -13,8 +13,8 @@ import { AppError } from '#core/error.js';
 export class MoviesService {
   readonly #repo: MoviesRepo;
 
-  constructor(movieRepo: MoviesRepo) {
-    this.#repo = movieRepo;
+  constructor(moviesRepo: MoviesRepo) {
+    this.#repo = moviesRepo;
   }
 
   async getById(id: number): Promise<PublicMovie | undefined> {
@@ -44,8 +44,13 @@ export class MoviesService {
   }
 
   async updateMovie(id: number, data: MovieUpdateInput): Promise<PublicMovie> {
-    if (Object.keys(data).length === 0) {
-      throw new AppError(400, 'VALIDATION', 'update data is empty');
+    const movie = await this.#repo.findById(id);
+    if (!movie) {
+      throw new AppError(
+        404,
+        'MOVIE_NOT_FOUND',
+        'a movie with this ID does not exist',
+      );
     }
 
     await this.#repo.updateMovie(id, data);

@@ -78,7 +78,17 @@ export function createMoviesController(service: MoviesService) {
     res.json(updatedMovie);
   };
 
-  return { getById, getList, createMovie, updateMovie };
+  const deleteMovie: RequestHandler = async (req, res) => {
+    const id = z.coerce.number().int().positive().safeParse(req.params.id);
+    if (!id.success) {
+      throw new AppError(400, 'VALIDATION', 'id is missing or not a number');
+    }
+
+    await service.deleteMovie(id.data);
+    res.json({});
+  };
+
+  return { getById, getList, createMovie, updateMovie, deleteMovie };
 }
 
 export type MoviesController = ReturnType<typeof createMoviesController>;

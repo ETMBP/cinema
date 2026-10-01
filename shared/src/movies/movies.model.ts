@@ -33,7 +33,7 @@ export const movieUpdateInputSchema = z.object({
 
 export type MovieUpdateInput = z.infer<typeof movieUpdateInputSchema>;
 
-const sortTerms = ['title', 'year', 'addedWhen', 'addedBy'];
+const sortTerms = ['title', 'year', 'addedWhen', 'addedBy'] as const;
 const queryBool = z.enum(['true', 'false']).transform((v) => v === 'true');
 
 export const movieListQuerySchema = z.object({

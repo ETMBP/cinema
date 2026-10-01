@@ -1,12 +1,13 @@
-import type { DbExecutor, DbPool, SqlParam } from '#core/db/db.repo.js';
+import type { DbPool, SqlParam } from '#core/db/db.repo.js';
 import type {
   MovieInput,
   MovieListQuery,
   MovieUpdateInput,
 } from '@cinema/shared';
-import { movieRowScheme, type MovieRow } from './movies.model.js';
+import { movieRowSchema, type MovieRow } from './movies.model.js';
 import type { ResultSetHeader } from 'mysql2';
 import z from 'zod';
+import { AppError } from '#core/error.js';
 
 const SORT_COLUMNS: Record<MovieListQuery['sort'], string> = {
   title: 'm.title',
@@ -30,12 +31,12 @@ export class MoviesRepo {
     const query = `${MOVIE_SELECT} WHERE m.id = ?`;
     const params = [id];
 
-    const rows = await this.#db.queryRows(movieRowScheme, query, params);
+    const rows = await this.#db.queryRows(movieRowSchema, query, params);
     return rows[0];
   }
 
   async findAll(): Promise<MovieRow[]> {
-    const rows = await this.#db.queryRows(movieRowScheme, MOVIE_SELECT);
+    const rows = await this.#db.queryRows(movieRowSchema, MOVIE_SELECT);
     return rows;
   }
 
@@ -66,7 +67,7 @@ export class MoviesRepo {
     const offset = (queryInput.page - 1) * queryInput.pageSize;
     const query = `${MOVIE_SELECT} ${where} ORDER BY ${orderBy} LIMIT ? OFFSET ?`;
 
-    const rows = await this.#db.queryRows(movieRowScheme, query, [
+    const rows = await this.#db.queryRows(movieRowSchema, query, [
       ...queryParams,
       queryInput.pageSize,
       offset,
@@ -74,7 +75,9 @@ export class MoviesRepo {
 
     const [count] = await this.#db.queryRows(
       z.object({ total: z.number() }),
-      `SELECT COUNT(*) AS total FROM movies AS m ${where}`,
+      `SELECT COUNT(*) AS total FROM movies AS m
+      LEFT JOIN users AS u ON u.id = m.added_by
+      ${where}`,
       queryParams,
     );
 
@@ -107,6 +110,9 @@ export class MoviesRepo {
   }
 
   async updateMovie(id: number, d: MovieUpdateInput): Promise<void> {
+    if (Object.keys(d).length === 0) {
+      throw new AppError(400, 'VALIDATION', 'update data is empty');
+    }
     const columns: string[] = [];
     const params: SqlParam[] = [];
 
@@ -133,60 +139,5 @@ export class MoviesRepo {
 
     const query = `UPDATE movies SET ${columns.join(' = ?, ')} = ? WHERE id = ?`;
     await this.#db.execute(query, [...params, id]);
-  }
-
-  async updateTitle(
-    id: number,
-    title: string,
-    dbConn: DbExecutor = this.#db,
-  ): Promise<void> {
-    const query = `UPDATE movies SET title = ? WHERE id = ?`;
-    const params = [title, id];
-
-    await dbConn.execute(query, params);
-  }
-
-  async updateYear(
-    id: number,
-    year: number,
-    dbConn: DbExecutor = this.#db,
-  ): Promise<void> {
-    const query = `UPDATE movies SET year = ? WHERE id = ?`;
-    const params = [year, id];
-
-    await dbConn.execute(query, params);
-  }
-
-  async updateIsWatched(
-    id: number,
-    isWatched: boolean,
-    dbConn: DbExecutor = this.#db,
-  ): Promise<void> {
-    const query = `UPDATE movies SET is_watched = ? WHERE id = ?`;
-    const params = [isWatched, id];
-
-    await dbConn.execute(query, params);
-  }
-
-  async updateIsDownloaded(
-    id: number,
-    isDownloaded: boolean,
-    dbConn: DbExecutor = this.#db,
-  ): Promise<void> {
-    const query = `UPDATE movies SET is_downloaded = ? WHERE id = ?`;
-    const params = [isDownloaded, id];
-
-    await dbConn.execute(query, params);
-  }
-
-  async updateImdbUrl(
-    id: number,
-    imdbUrl: string | null,
-    dbConn: DbExecutor = this.#db,
-  ): Promise<void> {
-    const query = `UPDATE movies SET imdb_url = ? WHERE id = ?`;
-    const params = [imdbUrl, id];
-
-    await dbConn.execute(query, params);
   }
 }
